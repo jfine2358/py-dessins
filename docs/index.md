@@ -1,17 +1,7 @@
-# Welcome to MkDocs
+# Python dessins
 
-For full documentation visit [mkdocs.org](http://mkdocs.org).
+A dessin is a simple but deep mathematical object. It is used in algebraic number theory.
 
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+The first goal of this package is to some basic calculations related
+to the author's wish to construct from each dessin D an algbraic
+number eta.

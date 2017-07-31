@@ -1,1 +1,7 @@
-site_name: My Docs
+site_name: Python dessins
+
+pages:
+- Home:
+  - 'index.md'
+- Core:
+  - 'core/binary.md'
