@@ -11,3 +11,12 @@ def test_create():
 
     with pytest.raises(ValueError):
         BytesDessin(bytes(range(3)), bytes(range(4)))
+
+
+def test_iter_cycles():
+
+    from dessins.work import iter_cycles
+
+    assert list(iter_cycles([])) == []
+    assert list(iter_cycles([0, 1, 2])) == [(0,), (1,), (2,)]
+    assert list(iter_cycles([1, 0, 2])) == [(0, 1), (2,)]
