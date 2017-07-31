@@ -1,5 +1,6 @@
 '''Work file for dessins'''
 
+import itertools
 
 def iter_cycles(perm):
     '''Decompose permutation perm into sequence of disjoint cycles.
@@ -35,6 +36,29 @@ def iter_cycles(perm):
                 # Add item to cycle, and record item as done.
                 cycle.append(item)
                 done[item] = True
+
+
+def iter_product(*permutations):
+    '''Iterate over Cartesian product of permutations.
+    '''
+
+    perms = tuple(permutations)
+
+    prev = 1
+    factors = []
+    for perm in reversed(perms):
+        factors.append(prev)
+        prev *= len(perm)
+
+    factors.reverse()
+
+    scaled_perms = tuple(
+        tuple(n * i for i in perm)
+        for n, perm in zip(factors, perms)
+    )
+
+    for terms in itertools.product(*scaled_perms):
+        yield sum(terms)
 
 
 class BytesDessin(tuple):
