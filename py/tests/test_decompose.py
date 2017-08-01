@@ -1,11 +1,23 @@
 '''Test work file for dessins'''
 
+from dessins.decompose import iter_cycle
 from dessins.decompose import iter_decompose
+
+# TODO: Static data for test suite.
+
+def TIC(perm, v):
+    '''Tuple Iter Cycle.'''
+    return tuple(iter_cycle(perm, v))
 
 
 def TID(alpha, beta):
     '''Tuple Iter Decompose.'''
     return tuple(iter_decompose(alpha, beta))
+
+
+def test_TIC_one():
+
+    assert TIC((0,), 0) == (0,)
 
 
 def test_TID_zero():
@@ -17,6 +29,16 @@ def test_TID_one():
     '''Test for the  unique dessin of length one.'''
     assert TID((0,), (0,)) == (
         ('S', 0),
-        # And we expect more here.
+        ('a', (0,)),
+        ('b', (0,)),
+        ('E', 0),
+    )
+
+def test_TID_cycle_one():
+    '''Test for the  unique dessin of length two.'''
+    assert TID((1, 0), (1, 0)) == (
+        ('S', 0),
+        ('a', (0, 1)),
+        ('b', (0, 1)),
         ('E', 0),
     )
