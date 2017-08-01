@@ -27,13 +27,32 @@ class DecomposeState:
 
     '''
     def __init__(self, dessin):
-        pass
+
+        alpha, beta = dessin
+        self.perm_data = dict(
+            a =  (alpha, set()),
+            b = (beta, set()),
+        )
+
+        self.seen = bytearray(len(alpha))
+
+    def do(self, c, edge):
+
+        perm, support = self.perm_data
+        cycle = tuple(iter_cycle(perm, edge))
+        for tmp in cycle:
+            self.seen[tmp] = True
+        support.update(cycle)
+        return c, cycle
 
     def do_alpha(self, edge):
-        pass
+        return self.do('a', edge)
 
     def do_beta(self, edge):
-        pass
+        return self.do('b', edge)
+
+
+
 
 
 # TODO: Be consistent in use of dessin = pair of permutations.
@@ -41,9 +60,10 @@ def iter_decompose(alpha, beta):
     '''Decomposition of pair of permutations into irreducibles.
 
     '''
-
+    dessin = alpha, beta
     assert len(alpha) == len(beta)
     seen = bytearray(len(alpha))
+    state = DecomposeState(dessin)
 
     def get_cycle(c, v):
 
