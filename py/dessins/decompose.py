@@ -19,6 +19,24 @@ def iter_cycle(perm, v):
             break
 
 
+class DecomposeState:
+    '''State variables for iter_decompose(dessin).
+
+    Maintains the loop invariants of iter_decompose(dessin). The flow
+    of control is in iter_decompose.
+
+    '''
+    def __init__(self, dessin):
+        pass
+
+    def do_alpha(self, edge):
+        pass
+
+    def do_beta(self, edge):
+        pass
+
+
+# TODO: Be consistent in use of dessin = pair of permutations.
 def iter_decompose(alpha, beta):
     '''Decomposition of pair of permutations into irreducibles.
 
