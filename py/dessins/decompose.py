@@ -31,7 +31,7 @@ def iter_seen_cycle(seen, perm, start):
         yield edge
         edge = perm[edge]
         if edge == start:
-            break
+            return
 
     raise ValueError('Not a permutation - infinite loop.')
 
