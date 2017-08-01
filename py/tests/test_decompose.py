@@ -1,7 +1,9 @@
 '''Test work file for dessins'''
 
 from dessins.decompose import iter_cycle
+from dessins.decompose import iter_seen_cycle
 from dessins.decompose import iter_decompose
+from dessins.decompose import DecomposeState
 
 # TODO: Static data for test suite.
 
@@ -13,6 +15,14 @@ def TIC(perm, v):
 def TID(alpha, beta):
     '''Tuple Iter Decompose.'''
     return tuple(iter_decompose(alpha, beta))
+
+
+class TestDecomposeState:
+
+    def test(self):
+
+        state = DecomposeState(((0,), (0,)))
+        assert state.seen == bytearray(b'\x00')
 
 
 def test_TIC_one():

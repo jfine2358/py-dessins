@@ -19,40 +19,33 @@ def iter_cycle(perm, v):
             break
 
 
+def iter_seen_cycle(seen, perm, start):
+    '''Yield start, perm[start], ... until we return to start.
+
+    If perm not a permutation, may get exception or infinite loop.
+    '''
+
+    edge = start
+    for i in range(len(perm)):
+        seen[edge] = True
+        yield edge
+        edge = perm[edge]
+        if edge == start:
+            break
+
+    raise ValueError('Not a permutation - infinite loop.')
+
+
 class DecomposeState:
     '''State variables for iter_decompose(dessin).
 
     Maintains the loop invariants of iter_decompose(dessin). The flow
     of control is in iter_decompose.
-
     '''
     def __init__(self, dessin):
 
-        alpha, beta = dessin
-        self.perm_data = dict(
-            a =  (alpha, set()),
-            b = (beta, set()),
-        )
-
-        self.seen = bytearray(len(alpha))
-
-    def do(self, c, edge):
-
-        perm, support = self.perm_data
-        cycle = tuple(iter_cycle(perm, edge))
-        for tmp in cycle:
-            self.seen[tmp] = True
-        support.update(cycle)
-        return c, cycle
-
-    def do_alpha(self, edge):
-        return self.do('a', edge)
-
-    def do_beta(self, edge):
-        return self.do('b', edge)
-
-
-
+        self.alpha, self.beta = dessin
+        self.seen = bytearray(len(self.alpha))
 
 
 # TODO: Be consistent in use of dessin = pair of permutations.
