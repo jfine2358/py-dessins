@@ -1,4 +1,4 @@
-'''Tests for dessins.tools
+'''Tests for dessins.permtools
 
 '''
 
@@ -7,14 +7,14 @@ import pytest
 
 def test_import():
 
-    import dessins.tools
-    from dessins.tools import is_perm
-    from dessins.tools import iter_cycle
+    import dessins.permtools
+    from dessins.permtools import is_perm
+    from dessins.permtools import iter_cycle
 
 
 def test_is_perm():
 
-    from dessins.tools import is_perm
+    from dessins.permtools import is_perm
 
     # Every itertools permutation passes ...
     for i in range(5):
@@ -45,6 +45,6 @@ def test_is_perm():
 
 def test_iter_cycle():
 
-    from dessins.tools import iter_cycle
+    from dessins.permtools import iter_cycle
 
     # And put some more tests here.

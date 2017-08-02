@@ -1,4 +1,4 @@
-'''Tools for dessins
+'''Tools for permutations
 
 '''
 
