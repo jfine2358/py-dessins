@@ -13,10 +13,6 @@ def test_import():
     from dessins.permtools import iter_seen_cycle
     from dessins.permtools import iter_cycles
 
-    from dessins.permtools import perm_from_str36
-    from dessins.permtools import str36_from_perm
-
-
 def test_is_perm():
 
     from dessins.permtools import is_perm
@@ -46,14 +42,6 @@ def test_is_perm():
 
     # Empty strings pass!
     assert is_perm(str())
-
-
-def test_perm_to_and_from_str36():
-
-    from dessins.permtools import perm_from_str36
-    from dessins.permtools import str36_from_perm
-
-    # TODO: Add some tests.
 
 
 def test_iter_cycle():

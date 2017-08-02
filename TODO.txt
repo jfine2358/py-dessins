@@ -1,0 +1,4 @@
+
+I've added dessins/__init.py to solve pytest producing
+E   SystemError: Parent module '' not loaded, cannot perform relative import
+https://github.com/pytest-dev/pytest-django/issues/303
