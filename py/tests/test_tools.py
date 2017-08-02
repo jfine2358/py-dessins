@@ -8,21 +8,25 @@ import pytest
 def test_import():
 
     import dessins.tools
+    from dessins.tools import is_perm
+    from dessins.tools import iter_cycle
 
 
 def test_is_perm():
+
     from dessins.tools import is_perm
 
-    # Every itertools permutation passes.
+    # Every itertools permutation passes ...
     for i in range(5):
         for item in itertools.permutations(range(i)):
-            # Whatever the sequence type.
+            # ... whatever the sequence type.
             for t in list, tuple, bytes:
                 assert is_perm(t(item)), (t, item)
 
-    # But non-permutations of {0, ..., n} fail.
+    # Non-permutations of {0, ..., n} fail.
     assert not is_perm([1])
     assert not is_perm([1, 1])
+    assert not is_perm(['a', 'b', 'c'])
 
     # Every suitable sequence of ints passes.
     for item in (
@@ -37,3 +41,10 @@ def test_is_perm():
 
     # Empty strings pass!
     assert is_perm(str())
+
+
+def test_iter_cycle():
+
+    from dessins.tools import iter_cycle
+
+    # And put some more tests here.

@@ -18,3 +18,30 @@ def is_perm(seq):
     value = list(seq)
     value.sort()
     return value == list(range(len(value)))
+
+
+def iter_cycle(perm, start):
+    '''Yield start, perm[start], ... until we return to start.
+
+    If infinite loop, raise ValueError.
+
+    >>> tuple(iter_cycle([1, 2, 0], 0))
+    (0, 1, 2)
+    >>> tuple(iter_cycle([1, 2, 0], 1))
+    (1, 2, 0)
+    >>> tuple(iter_cycle([1, 2, 0], 2))
+    (2, 0, 1)
+
+    >>> tuple(iter_cycle((1, 1), 0))
+    Traceback (most recent call last):
+    ValueError: Not a permutation - infinite loop broken.
+    '''
+
+    curr = start
+    for i in range(len(perm)):
+        yield curr
+        curr = perm[curr]
+        if curr == start:
+            return
+
+    raise ValueError('Not a permutation - infinite loop broken.')
