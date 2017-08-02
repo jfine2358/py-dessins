@@ -3,6 +3,7 @@
 '''
 
 import collections
+import string
 
 def is_perm(seq):
     '''Return True if seq is permutation of {0, ..., n}.
@@ -18,6 +19,48 @@ def is_perm(seq):
     value = list(seq)
     value.sort()
     return value == list(range(len(value)))
+
+
+# TODO: This needs a review.
+# TODO: Refactor out general purpose code?
+DIGITS_AND_LOWERCASE = string.digits + string.ascii_lowercase
+def perm_from_str36(s):
+    '''Create permutation (of length at most 36) from string s.
+
+    >>> perm = perm_from_str36('1230')
+    >>> tuple(perm)
+    (1, 2, 3, 0)
+    >>> type(perm) == bytes
+    True
+
+    See also str36_from_perm(perm).
+    '''
+    if s.lower() != s:
+        raise ValueError
+
+    perm = bytes(int(c, 36) for c in s)
+    if not is_perm(perm):
+        raise ValueError("Failed to convert '%' to a permutation" % s)
+    return perm
+
+
+def str36_from_perm(perm):
+    '''Return string encoding of perm (of length at most 36).
+
+    >>> str36_from_perm([1, 2, 3, 0])
+    '1230'
+    >>> str36_from_perm(range(36))
+    '0123456789abcdefghijklmnopqrstuvwxyz'
+
+    See also perm_from_str36(s).
+    '''
+
+    if not is_perm(perm):
+        raise ValueError("Argument is not a permutation")
+    if len(perm) > 36:
+        raise ValueError("Argument is too long")
+
+    return ''.join(DIGITS_AND_LOWERCASE[i] for i in perm)
 
 
 def iter_cycle(perm, start):
