@@ -11,6 +11,7 @@ def test_import():
     from dessins.permtools import is_perm
     from dessins.permtools import iter_cycle
     from dessins.permtools import iter_seen_cycle
+    from dessins.permtools import iter_cycles
 
     from dessins.permtools import perm_from_str36
     from dessins.permtools import str36_from_perm
@@ -92,3 +93,9 @@ def test_iter_seen_cycle():
     # Check that every seen index is in a seen cycle, and vice versa.
     for i in range(len(perm)):
         assert seen[i] == (i in cycle1 + cycle2)
+
+
+def test_iter_cycles():
+
+    from dessins.permtools import iter_cycles
+    # TODO: Add some tests.

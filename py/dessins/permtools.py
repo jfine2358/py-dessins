@@ -105,3 +105,32 @@ def iter_seen_cycle(seen, perm, start):
             return
 
     raise ValueError('Not a permutation - infinite loop broken.')
+
+
+def iter_cycles(perm):
+    '''Decompose perm into disjoint cycles, lowest index first.
+
+    >>> perm = perm_from_str36('3214560')
+    >>> cycles = tuple(iter_cycles(perm))
+
+    >>> list(map(list, cycles)) # Convert cycles to list of lists.
+    [[0, 3, 4, 5, 6], [1, 2]]
+
+    Every cycle has the same type, namely type(perm). Here, bytes.
+    >>> set(map(type, cycles)) == {type(perm)} == {bytes}
+    True
+    '''
+
+    seen = bytearray(len(perm)) # Records indexes yielded in a cycle.
+    cycletype = type(perm)      # Yielded cycle has same type as perm.
+
+    start = -1
+    while True:
+
+        # Short cut: If (index <= start) then index is already seen.
+        # GOTCHA: Negative indexing: bytes(6).find(False, -1) == 5
+        start = seen.find(False, start + 1)
+        if start == -1:
+            return              # Not found, no more cycles, all done.
+
+        yield cycletype(iter_seen_cycle(seen, perm, start))
