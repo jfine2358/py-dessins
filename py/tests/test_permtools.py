@@ -12,6 +12,8 @@ def test_import():
     from dessins.permtools import iter_cycle
     from dessins.permtools import iter_seen_cycle
     from dessins.permtools import iter_cycles
+    from dessins.permtools import iter_cartprod
+
 
 def test_is_perm():
 
@@ -87,3 +89,21 @@ def test_iter_cycles():
 
     from dessins.permtools import iter_cycles
     # TODO: Add some tests.
+
+
+def test_iter_cart_prod():
+
+    from dessins.permtools import iter_cartprod
+    from dessins.permtools import perm_from_str
+    from dessins.permtools import str_from_perm
+
+    def doit(s):
+        perms = tuple(map(perm_from_str, s.split()))
+        perm = bytes(iter_cartprod(*perms))
+        return str_from_perm(perm)
+
+    # TODO: Set up regression tests?
+    # TODO: Explain what's going on?
+    assert doit('012 01') == '012345'
+    assert doit('120 0123') == '456789ab0123'
+    assert doit('10 0123456789') == 'abcdefghij0123456789'

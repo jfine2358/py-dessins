@@ -3,6 +3,7 @@
 '''
 
 import collections
+import itertools
 
 from .othertools import bytes_from_str62 as perm_from_str
 from .othertools import str62_from_bytes as str_from_perm
@@ -95,3 +96,41 @@ def iter_cycles(perm):
             return              # Not found, no more cycles, all done.
 
         yield cycletype(iter_seen_cycle(seen, perm, start))
+
+
+def iter_cartprod(*perms):
+    '''Iterate over Cartesian product of permutations.
+
+    This product is the component-wise permutation of the Cartesian
+    product of the index sets. We enumerate the tuples in the index
+    set Cartesian product.
+
+    For example:
+    >>> str_from_perm(bytes(iter_cartprod(
+    ...   perm_from_str('210'),
+    ...   perm_from_str('0123'),
+    ... )))
+    '89ab45670123'
+    '''
+
+    # Each index in the Cartesian product will be a sum of scaled
+    # terms. Think of a milometer.
+
+    # Each factor is the product of the lengths of the subsequent
+    # permutations. This ugly code does just that.
+    prev = 1
+    factors = []
+    for perm in reversed(perms):
+        factors.append(prev)
+        prev *= len(perm)
+    factors.reverse()
+
+    # Now apply the scales to the permutations.
+    scaled_perms = tuple(
+        tuple(n * i for i in perm)
+        for n, perm in zip(factors, perms)
+    )
+
+    # The rest is easy.
+    for terms in itertools.product(*scaled_perms):
+        yield sum(terms)
