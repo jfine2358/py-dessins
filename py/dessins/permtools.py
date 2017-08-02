@@ -45,3 +45,20 @@ def iter_cycle(perm, start):
             return
 
     raise ValueError('Not a permutation - infinite loop broken.')
+
+
+def iter_seen_cycle(seen, perm, start):
+    '''As iter_cycle, but set seen[curr] = True, and then yield curr.
+
+    Used in iter_cycles(perm), to simplify recording of loop state.
+    '''
+
+    curr = start
+    for i in range(len(perm)):
+        seen[curr] = True       # Only change from iter_cycle.
+        yield curr
+        curr = perm[curr]
+        if curr == start:
+            return
+
+    raise ValueError('Not a permutation - infinite loop broken.')
