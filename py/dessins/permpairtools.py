@@ -121,10 +121,41 @@ class IterCyclesState:
             cycle = self.cycletype(iter_seen_cycle(self.seen, perm, edge))
             self.balance.update(1 - side, set(cycle))
 
-            # Alll done, yield the result (with a side indicator).
+            # All done, yield the result (with a side indicator).
             yield 'ab'[side], cycle
 
         if self.balance[0] or self.balance[1]:
             raise ValueError
 
         self.mode = 'COMPONENT'
+
+
+def group_component_cycles_filter(comp_cycles):
+    '''Yield pair of cycles for each component in comp_cycles.
+
+    >>> gccf = group_component_cycles_filter
+    >>> tuple(gccf((('S', 0), ('a', 'A1'), ('b', 'B1'), ('E', 0))))
+    ((['A1'], ['B1']),)
+    '''
+
+    comp_cycles = iter(comp_cycles) # Must be an iterator.
+    while True:
+
+        key, value = next(comp_cycles)
+        if key != 'S':
+            raise ValueError
+
+        cycles_pair = ([], [])
+
+        for key, cycle in comp_cycles:
+
+            if key == 'E':
+                yield cycles_pair
+                break
+            else:
+                side = dict(a=0, b=1)[key]
+                cycles_pair[side].append(cycle)
+
+        else:
+            # Fell through the loop.
+            raise ValueError
