@@ -69,26 +69,21 @@ class IterCyclesState:
 
     def __init__(self, permpair):
 
-        alpha, beta = permpair
         self.cycletype = tuple  # Or perhaps type(alpha).
         self.permpair = permpair
-        self.seen = bytearray(len(alpha))
-        # TODO: This is odd choice of name. Perhaps mode is better
-        self.state = 'COMPONENT' # Allowed to get next component.
+        self.seen = bytearray(len(permpair[0]))
+        self.mode = 'COMPONENT' # Allowed to get next component.
 
         # We use missing to drive the loop. The seed is initial state.
         self.missing = SetDiff()
         self.seed = []
-
-        # This is a hangover from earlier code.
-        self.alpha_beta = dict(a = alpha, b = beta)
 
 
     def iter_components(self):
         '''Yield component_state.'''
 
         while True:
-            if self.state != 'COMPONENT':
+            if self.mode != 'COMPONENT':
                 raise StateError
             edge = self.seen.find(False)
             if edge == -1:
@@ -96,42 +91,46 @@ class IterCyclesState:
             else:
                 # New component, so store the new edge for later use.
                 self.seed = [edge]
-                self.state = 'CYCLE' # Allowed to get next cycle.
+                self.mode = 'CYCLE' # Allowed to get next cycle.
                 yield edge
 
 
     def iter_cycles(self):
 
-        if self.state != 'CYCLE':
+        if self.mode != 'CYCLE':
             raise StateError
 
         while True:
 
             if self.seed:
-                yield self.get_key_cycle('a', self.seed[0])
+                edge = self.seed[0]
+                alpha_beta = 0
                 self.seed = []
+                yield self.get_key_cycle(alpha_beta, edge)
+
             elif self.missing[0]:
                 a = min(self.missing[0])
-                yield self.get_key_cycle('a', a)
+                yield self.get_key_cycle(0, a)
             elif self.missing[1]:
                 b = min(self.missing[1])
-                yield self.get_key_cycle('b', b)
+                yield self.get_key_cycle(1, b)
             else:
                 break
 
         if self.missing[0] or self.missing[1]:
             raise ValueError
 
-        self.state = 'COMPONENT'
+        self.mode = 'COMPONENT'
 
 
-    def get_key_cycle(self, key, edge):
+    def get_key_cycle(self, i, edge):
 
-        # TODO: Getting cycle not part of state management.
-        perm = self.alpha_beta[key]
+        # Get the cycle.
+        perm = self.permpair[i]
         cycle = self.cycletype(iter_seen_cycle(self.seen, perm, edge))
 
-        i = dict(a=0, b=1)[key]
+        # Update the records.
         self.missing.update(1 - i, set(cycle))
 
-        return key, cycle
+        # Return so-called (key, cycle) pair.
+        return 'ab'[i], cycle
