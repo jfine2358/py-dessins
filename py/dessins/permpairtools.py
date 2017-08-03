@@ -42,7 +42,7 @@ def iter_component_cycles(permpair):
     state = IterCyclesState(permpair)
     for edge in state.iter_components():
         yield 'S', edge
-        yield from state.iter_cycles()
+        yield from state.iter_side_cycles()
         yield 'E', edge
 
 
@@ -59,7 +59,7 @@ class IterCyclesState:
     >>> state = ICS(permpair)
     >>> next(state.iter_components())
     0
-    >>> tuple(next(state.iter_cycles()))
+    >>> tuple(next(state.iter_side_cycles()))
     ('a', (0,))
 
     # Expect a state exception.
@@ -74,8 +74,8 @@ class IterCyclesState:
         self.seen = bytearray(len(permpair[0]))
         self.mode = 'COMPONENT' # Allowed to get next component.
 
-        # We use missing to drive the loop. The seed is initial state.
-        self.missing = SetDiff()
+        # We use balance to drive the loop. The seed is initial state.
+        self.balance = SetDiff()
         self.seed = []
 
 
@@ -85,52 +85,46 @@ class IterCyclesState:
         while True:
             if self.mode != 'COMPONENT':
                 raise StateError
+
             edge = self.seen.find(False)
-            if edge == -1:
-                return
-            else:
+            if edge != -1:
                 # New component, so store the new edge for later use.
                 self.seed = [edge]
                 self.mode = 'CYCLE' # Allowed to get next cycle.
                 yield edge
+            else:
+                break
 
 
-    def iter_cycles(self):
+    def iter_side_cycles(self):
 
         if self.mode != 'CYCLE':
             raise StateError
 
         while True:
 
+            # Either get (side, edge) or exit while loop.
             if self.seed:
-                edge = self.seed[0]
-                alpha_beta = 0
+                side, edge = 0, self.seed[0]
                 self.seed = []
-                yield self.get_key_cycle(alpha_beta, edge)
-
-            elif self.missing[0]:
-                a = min(self.missing[0])
-                yield self.get_key_cycle(0, a)
-            elif self.missing[1]:
-                b = min(self.missing[1])
-                yield self.get_key_cycle(1, b)
             else:
-                break
+                for side in range(2):
+                    if self.balance[side]:
+                        edge = min(self.balance[side])
+                        break   # Found an edge for current side.
+                else:
+                    # Fell through for loop, so exit while loop.
+                    break
 
-        if self.missing[0] or self.missing[1]:
+            # Get the cycle and update the balance.
+            perm = self.permpair[side]
+            cycle = self.cycletype(iter_seen_cycle(self.seen, perm, edge))
+            self.balance.update(1 - side, set(cycle))
+
+            # Alll done, yield the result (with a side indicator).
+            yield 'ab'[side], cycle
+
+        if self.balance[0] or self.balance[1]:
             raise ValueError
 
         self.mode = 'COMPONENT'
-
-
-    def get_key_cycle(self, i, edge):
-
-        # Get the cycle.
-        perm = self.permpair[i]
-        cycle = self.cycletype(iter_seen_cycle(self.seen, perm, edge))
-
-        # Update the records.
-        self.missing.update(1 - i, set(cycle))
-
-        # Return so-called (key, cycle) pair.
-        return 'ab'[i], cycle
