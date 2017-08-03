@@ -101,6 +101,10 @@ class IterCyclesState:
                 return
             else:
                 self.state = 'CYCLE' # Allowed to get next cycle.
+                # This is a bodge, to get the loop going. It causes
+                # harm, and must be replaced first, if I'm to use
+                # SetDiff to record state. This bodge violates the
+                # (implicit) loop invariant.
                 self.a_missing.add(edge)
                 yield edge
 
