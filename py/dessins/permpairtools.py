@@ -1,4 +1,8 @@
+'''Tools for pairs of permutations
 
+A permpair is the underlying data of a dessin. A dessin is a permpair,
+up to relabelling, and with additional methods.
+'''
 
 from .permtools import iter_seen_cycle
 
@@ -8,26 +12,29 @@ class StateError(ValueError):
     pass
 
 
-def iter_cycles(permpair):
+def iter_component_cycles(permpair):
+
     '''Iterate over cycles in permpair, grouped by irreducible component.
 
-    >>> permpair = (range(0), range(0))
-    >>> tuple(iter_cycles(permpair))
-    ()
+    >>> from .permtools import perm_from_str
+    >>> def doit(s0, s1):
+    ...     permpair = (perm_from_str(s0), perm_from_str(s1))
+    ...     return tuple(iter_component_cycles(permpair))
 
-    >>> tuple(iter_cycles((range(2), range(2))))
+    Both perms the identity permutation.
+    >>> doit('', '')
+    ()
+    >>> doit('0', '0')
+    (('S', 0), ('a', (0,)), ('b', (0,)), ('E', 0))
+    >>> doit('01', '01')
     (('S', 0), ('a', (0,)), ('b', (0,)), ('E', 0), ('S', 1), ('a', (1,)), ('b', (1,)), ('E', 1))
 
     Checked - this output is correct.
-    >>> tuple(iter_cycles(((1, 2, 0), (2, 0, 1))))
+    >>> doit('120', '201')
     (('S', 0), ('a', (0, 1, 2)), ('b', (0, 2, 1)), ('E', 0))
-
-    Checked - this output is correct.
-    >>> tuple(iter_cycles(((1, 2, 0), range(3))))
+    >>> doit('120', '012')
     (('S', 0), ('a', (0, 1, 2)), ('b', (0,)), ('b', (1,)), ('b', (2,)), ('E', 0))
-
-    Checked - this output is correct.
-    >>> tuple(iter_cycles((range(3), (2, 0, 1))))
+    >>> doit('012', '201')
     (('S', 0), ('a', (0,)), ('b', (0, 2, 1)), ('a', (1,)), ('a', (2,)), ('E', 0))
     '''
 
