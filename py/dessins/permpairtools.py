@@ -1,15 +1,18 @@
 
+
+from .permtools import iter_seen_cycle
+
 # https://stackoverflow.com/questions/1701199/is-there-an-analogue-to-java-illegalstateexception-in-python
 # https://stackoverflow.com/questions/10726919/what-error-to-raise-when-class-state-is-invalid
 class StateError(ValueError):
     pass
 
 
-def iter_cycles(dessin):
-    '''Iterate over cycles in dessin, grouped by irreducible component.
+def iter_cycles(permpair):
+    '''Iterate over cycles in permpair, grouped by irreducible component.
 
-    >>> dessin = (range(0), range(0))
-    >>> tuple(iter_cycles(dessin))
+    >>> permpair = (range(0), range(0))
+    >>> tuple(iter_cycles(permpair))
     ()
 
     >>> tuple(iter_cycles((range(2), range(2))))
@@ -28,7 +31,7 @@ def iter_cycles(dessin):
     (('S', 0), ('a', (0,)), ('b', (0, 2, 1)), ('a', (1,)), ('a', (2,)), ('E', 0))
     '''
 
-    state = IterCyclesState(dessin)
+    state = IterCyclesState(permpair)
     for edge in state.iter_components():
         yield 'S', edge
         yield from state.iter_cycles()
@@ -36,16 +39,16 @@ def iter_cycles(dessin):
 
 
 class IterCyclesState:
-    '''State device for iter_cycles(dessin).
+    '''State device for iter_cycles(permpair).
 
     >>> ICS = IterCyclesState
-    >>> dessin = (range(0), range(0))
-    >>> state = ICS(dessin)
+    >>> permpair = (range(0), range(0))
+    >>> state = ICS(permpair)
     >>> tuple(state.iter_components())
     ()
 
-    >>> dessin = (range(1), range(1))
-    >>> state = ICS(dessin)
+    >>> permpair = (range(1), range(1))
+    >>> state = ICS(permpair)
     >>> next(state.iter_components())
     0
     >>> tuple(next(state.iter_cycles()))
@@ -56,10 +59,10 @@ class IterCyclesState:
 
     '''
 
-    def __init__(self, dessin):
+    def __init__(self, permpair):
 
-        alpha, beta = dessin
-        self.dessin = dessin
+        alpha, beta = permpair
+        self.permpair = permpair
         self.seen = bytearray(len(alpha))
         self.state = 'COMPONENT' # Allowed to get next component.
 
@@ -121,20 +124,3 @@ class IterCyclesState:
         other_missing.update(set(cycle) - other_support) # Should be all or nothing.
 
         return key, cycle
-
-
-def iter_seen_cycle(seen, perm, start):
-    '''Yield start, perm[start], ... until we return to start.
-
-    If perm not a permutation, may get exception or infinite loop.
-    '''
-
-    edge = start
-    for i in range(len(perm)):
-        seen[edge] = True
-        yield edge
-        edge = perm[edge]
-        if edge == start:
-            return
-
-    raise ValueError('Not a permutation - infinite loop.')
