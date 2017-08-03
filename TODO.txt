@@ -2,3 +2,13 @@
 I've added dessins/__init.py to solve pytest producing
 E   SystemError: Parent module '' not loaded, cannot perform relative import
 https://github.com/pytest-dev/pytest-django/issues/303
+
+It might be nice to have set operation
+  (A, B) => (A - B, B - A, A intersect B)
+And it could do something similar for triples, etc.
+
+For set differences, I'd like to add __slots__. But I get
+TypeError: nonempty __slots__ not supported for subtype
+
+See also http://bugs.python.org/issue757997 (from 2003).
+Using __slots__ with str derived classes can cause segfault
