@@ -76,21 +76,12 @@ class IterCyclesState:
         # TODO: This is odd choice of name. Perhaps mode is better
         self.state = 'COMPONENT' # Allowed to get next component.
 
-        # It's these four sets that contain the complication. They
-        # drive the looping.
+        # We use missing to drive the loop. The seed is initial state.
         self.missing = SetDiff()
-        self.a_missing = set()
-        self.a_support = set()
-        self.b_missing = set()
-        self.b_support = set()
         self.seed = []
 
-        # We're in some confusion as to how we acccess them.
-        self.alpha_beta = dict(
-            #         perm, support, missing, other_support, other_missing
-            a = (alpha, self.a_support, self.a_missing, self.b_support, self.b_missing),
-            b = (beta, self.b_support, self.b_missing, self.a_support, self.a_missing),
-        )
+        # This is a hangover from earlier code.
+        self.alpha_beta = dict(a = alpha, b = beta)
 
 
     def iter_components(self):
@@ -119,42 +110,28 @@ class IterCyclesState:
             if self.seed:
                 yield self.get_key_cycle('a', self.seed[0])
                 self.seed = []
-            elif self.a_missing:
+            elif self.missing[0]:
                 a = min(self.missing[0])
-                a = min(self.a_missing)
                 yield self.get_key_cycle('a', a)
-            elif self.b_missing:
+            elif self.missing[1]:
                 b = min(self.missing[1])
-                b = min(self.b_missing)
                 yield self.get_key_cycle('b', b)
             else:
                 break
 
-        # At this point, there's nothing missing. Further, the two
-        # supports should be equal, and can be cleared. Although we're
-        # not doing that. So we'll have quadratic problems with large
-        # cycles.
+        if self.missing[0] or self.missing[1]:
+            raise ValueError
 
         self.state = 'COMPONENT'
 
 
     def get_key_cycle(self, key, edge):
 
-        # Again in confusion about accessing these sets. We're
-        # combining state management with the retrieval of a cycle.
-        perm, support, missing, other_support, other_missing = self.alpha_beta[key]
+        # TODO: Getting cycle not part of state management.
+        perm = self.alpha_beta[key]
         cycle = self.cycletype(iter_seen_cycle(self.seen, perm, edge))
-
-        # This is a new cycle.
-        support.update(cycle)
-        missing.difference_update(cycle)            # Should be all or nothing.
-        # other support is unchanged, but needed.
-        other_missing.update(set(cycle) - other_support) # Should be all or nothing.
 
         i = dict(a=0, b=1)[key]
         self.missing.update(1 - i, set(cycle))
-
-        assert self.a_missing == self.missing[0], (edge, self.a_missing, self.missing[0])
-        assert self.b_missing == self.missing[1], (edge, self.b_missing, self.missing[1])
 
         return key, cycle
