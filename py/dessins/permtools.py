@@ -163,3 +163,30 @@ def rebase_cycles(cycles):
         cycletype(bisect.bisect_left(values, i) for i in cyc)
         for cyc in cycles
     )
+
+
+def perm_from_cycles(cycles):
+    '''Produce permutations from cycles, assumed rebased.
+
+    >>> pfc = perm_from_cycles
+    >>> pfc([])
+    []
+    >>> pfc([[3, 0, 1, 2]])
+    [1, 2, 3, 0]
+
+    Assumes cycles rebased.
+    '''
+
+    length = sum(map(len, cycles))
+
+    value = [None] * length
+
+    for cyc in cycles:
+
+        # TODO: Make it a zip loop? Runs quicker?
+        prev = cyc[-1]
+        for curr in cyc:
+            value[prev] = curr
+            prev = curr
+
+    return value
