@@ -81,6 +81,7 @@ class IterCyclesState:
         self.a_support = set()
         self.b_missing = set()
         self.b_support = set()
+        self.seed = []
 
         # We're in some confusion as to how we acccess them.
         self.alpha_beta = dict(
@@ -100,12 +101,9 @@ class IterCyclesState:
             if edge == -1:
                 return
             else:
+                # New component, so store the new edge for later use.
+                self.seed = [edge]
                 self.state = 'CYCLE' # Allowed to get next cycle.
-                # This is a bodge, to get the loop going. It causes
-                # harm, and must be replaced first, if I'm to use
-                # SetDiff to record state. This bodge violates the
-                # (implicit) loop invariant.
-                self.a_missing.add(edge)
                 yield edge
 
 
@@ -116,7 +114,10 @@ class IterCyclesState:
 
         while True:
 
-            if self.a_missing:
+            if self.seed:
+                yield self.get_key_cycle('a', self.seed[0])
+                self.seed = []
+            elif self.a_missing:
                 a = min(self.a_missing)
                 yield self.get_key_cycle('a', a)
             elif self.b_missing:
