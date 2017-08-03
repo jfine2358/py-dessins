@@ -9,6 +9,75 @@ import itertools
 from .othertools import bytes_from_str62 as perm_from_str
 from .othertools import str62_from_bytes as str_from_perm
 
+class Relabel:
+    '''Dynamically build up a partial relabelling table.
+
+    Create empty partial relabelling of {0, .., 9}.
+    >>> relabel = Relabel(10)
+
+    Add some entries. New labels are created in numeric order.
+    >>> labels = (7, 4, 6, 1, 0)
+    >>> new_labels = tuple(map(relabel.forward, labels))
+    >>> new_labels
+    (0, 1, 2, 3, 4)
+
+    We can find the original labels.
+    >>> tuple(map(relabel.backward, new_labels))
+    (7, 4, 6, 1, 0)
+
+    The relabelling table is dynamic. We can add to it as we go.
+    >>> relabel.backward(5)
+    Traceback (most recent call last):
+    ValueError: Index i = 5 out of bounds (current size = 5)
+    >>> relabel.forward(9)
+    5
+    >>> relabel.backward(5)
+    9
+    '''
+
+    def __init__(self, maxsize):
+
+        # TODO: Document that len(self) is ambiguous?
+        # TODO: Provide read-only views?
+        # TODO: allow for maxsize > 255.
+        # TODO: Provide item access methods?
+        self._size = 0
+        self._zero_origin = None
+        self._backward = bytearray(maxsize)
+        self._forward = bytearray(maxsize)
+
+
+    @property
+    def size(self):
+        # Definitely don't want anyone changing this.
+        return self._size
+
+
+    def backward(self, i):
+
+        if 0 <= i < self._size:
+            return self._backward[i]
+        else:
+            msg = 'Index i = %s out of bounds (current size = %s)'
+            raise ValueError(msg %  (i, self._size))
+
+
+    def forward(self, i):
+
+        if i < 0:
+            raise ValueError('Negative index %s ambiguous' % i)
+
+        value = self._forward[i]
+        if value or (i == self._zero_origin):
+            return value
+
+        size = self._forward[i] = self._size
+        self._backward[size] = i
+        if size == 0:
+            i = self._zero_origin
+        self._size += 1
+        return size             # Before the increment.
+
 
 def is_perm(seq):
     '''Return True if seq is permutation of {0, ..., n}.
