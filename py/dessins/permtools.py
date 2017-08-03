@@ -2,6 +2,7 @@
 
 '''
 
+import bisect
 import collections
 import itertools
 
@@ -134,3 +135,31 @@ def iter_cartprod(*perms):
     # The rest is easy.
     for terms in itertools.product(*scaled_perms):
         yield sum(terms)
+
+
+def rebase_cycles(cycles):
+    '''Rebase cycles, to use {0, 1, ..., n}, with no gaps.
+
+    Preserves relative order between indices.
+    >>> rc = rebase_cycles
+    >>> tuple(rc([[9, 3, 7], [4]]))
+    ((3, 0, 2), (1,))
+
+    '''
+
+    # Two-pass algorithm, so make sure we can reread cycles.
+    # TODO: Instead, raise exception.
+    cycles = tuple(cycles)
+    cycletype = tuple           # TODO: Allow other values.
+
+    # Create sorted list of values.
+    values = []
+    for cyc in cycles:
+        values.extend(cyc)
+    values.sort()
+
+    # For each cycle, apply the lookup.
+    return tuple(
+        cycletype(bisect.bisect_left(values, i) for i in cyc)
+        for cyc in cycles
+    )
