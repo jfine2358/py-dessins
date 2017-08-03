@@ -69,15 +69,20 @@ class IterCyclesState:
     def __init__(self, permpair):
 
         alpha, beta = permpair
+        self.cycletype = tuple  # Or perhaps type(alpha).
         self.permpair = permpair
         self.seen = bytearray(len(alpha))
+        # TODO: This is odd choice of name. Perhaps mode is better
         self.state = 'COMPONENT' # Allowed to get next component.
 
+        # It's these four sets that contain the complication. They
+        # drive the looping.
         self.a_missing = set()
         self.a_support = set()
         self.b_missing = set()
         self.b_support = set()
 
+        # We're in some confusion as to how we acccess them.
         self.alpha_beta = dict(
             #         perm, support, missing, other_support, other_missing
             a = (alpha, self.a_support, self.a_missing, self.b_support, self.b_missing),
@@ -116,13 +121,20 @@ class IterCyclesState:
             else:
                 break
 
+        # At this point, there's nothing missing. Further, the two
+        # supports should be equal, and can be cleared. Although we're
+        # not doing that. So we'll have quadratic problems with large
+        # cycles.
+
         self.state = 'COMPONENT'
 
 
     def get_key_cycle(self, key, edge):
 
+        # Again in confusion about accessing these sets. We're
+        # combining state management with the retrieval of a cycle.
         perm, support, missing, other_support, other_missing = self.alpha_beta[key]
-        cycle = tuple(iter_seen_cycle(self.seen, perm, edge))
+        cycle = self.cycletype(iter_seen_cycle(self.seen, perm, edge))
 
         # This is a new cycle.
         support.update(cycle)
