@@ -91,7 +91,7 @@ def test_iter_cycles():
     # TODO: Add some tests.
 
 
-def test_iter_cart_prod():
+def test_iter_cartprod():
 
     from dessins.permtools import iter_cartprod
     from dessins.permtools import perm_from_str
@@ -102,8 +102,12 @@ def test_iter_cart_prod():
         perm = bytes(iter_cartprod(*perms))
         return str_from_perm(perm)
 
-    # TODO: Set up regression tests?
-    # TODO: Explain what's going on?
+    # Product of identity perms is identity perm.
     assert doit('012 01') == '012345'
-    assert doit('120 0123') == '456789ab0123'
+
+    # Product of reversing perms is reversing perm.
+    assert doit('210 10') == '543210'
+
+    # Multiplication is by blocks.
+    assert doit('210 0123') == '89ab45670123'
     assert doit('10 0123456789') == 'abcdefghij0123456789'

@@ -61,3 +61,11 @@ def hidden():
             raise ValueError("Argument is too long")
 
         return ''.join(DIGITS_AND_LOWERCASE[i] for i in perm)
+
+
+def more_hidden():
+
+    from functools import reduce
+    import operator
+    def num_product(iterable):
+        return reduce(operator.mul, iterable, 1)
