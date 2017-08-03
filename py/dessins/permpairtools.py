@@ -4,6 +4,7 @@ A permpair is the underlying data of a dessin. A dessin is a permpair,
 up to relabelling, and with additional methods.
 '''
 
+from .othertools import SetDiff
 from .permtools import iter_seen_cycle
 
 # https://stackoverflow.com/questions/1701199/is-there-an-analogue-to-java-illegalstateexception-in-python
@@ -77,6 +78,7 @@ class IterCyclesState:
 
         # It's these four sets that contain the complication. They
         # drive the looping.
+        self.missing = SetDiff()
         self.a_missing = set()
         self.a_support = set()
         self.b_missing = set()
@@ -118,9 +120,11 @@ class IterCyclesState:
                 yield self.get_key_cycle('a', self.seed[0])
                 self.seed = []
             elif self.a_missing:
+                a = min(self.missing[0])
                 a = min(self.a_missing)
                 yield self.get_key_cycle('a', a)
             elif self.b_missing:
+                b = min(self.missing[1])
                 b = min(self.b_missing)
                 yield self.get_key_cycle('b', b)
             else:
@@ -146,5 +150,11 @@ class IterCyclesState:
         missing.difference_update(cycle)            # Should be all or nothing.
         # other support is unchanged, but needed.
         other_missing.update(set(cycle) - other_support) # Should be all or nothing.
+
+        i = dict(a=0, b=1)[key]
+        self.missing.update(1 - i, set(cycle))
+
+        assert self.a_missing == self.missing[0], (edge, self.a_missing, self.missing[0])
+        assert self.b_missing == self.missing[1], (edge, self.b_missing, self.missing[1])
 
         return key, cycle
