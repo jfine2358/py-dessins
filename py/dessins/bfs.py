@@ -13,12 +13,11 @@ def iter_bfs(permpair, root):
     # TODO: Fix off-by-one bug in Relabel.
     >>> items = tuple(iter_bfs((p2, p3), 4))
     >>> str(items).replace(' ', '')
-    '([1,2],[3,1],[4,5],[6,3],[7,8],[9,6],[10,7],[2,9],[1,2],[5,4])'
+    '([1,2],[3,1],[4,5],[6,3],[7,0],[8,6],[9,7],[2,8],[5,4],[0,9])'
     '''
 
-    fudge = 1
     size = len(permpair[0])
-    relabel = Relabel(size + fudge)
+    relabel = Relabel(size)
     edge_zero = relabel.forward(root)
 
     pending = []

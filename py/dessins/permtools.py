@@ -33,6 +33,13 @@ class Relabel:
     5
     >>> relabel.backward(5)
     9
+
+    TODO: Move this to test_permtools.
+    >>> relabel = Relabel(10)
+    >>> relabel.forward(4)
+    0
+    >>> relabel.forward(4)
+    0
     '''
 
     def __init__(self, maxsize):
@@ -74,7 +81,9 @@ class Relabel:
         size = self._forward[i] = self._size
         self._backward[size] = i
         if size == 0:
-            i = self._zero_origin
+            # Had written i = self._zero_origin.
+            # Add a test that exercises this line of code!
+            self._zero_origin = i
         self._size += 1
         return size             # Before the increment.
 
