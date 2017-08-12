@@ -143,6 +143,13 @@ At this point, we won't bother finding the best.
 >>> t = tuple(AAAAA_0.iter_relabel(0)); (len(t)//2, t[:20])
 (2520, (1, 2, 3, 4, 5, 0, 6, 7, 8, 1, 9, 10, 11, 12, 13, 3, 14, 15, 16, 17))
 
+And now we're all done. Nothing left to do for powers of A.
+>>> TMP = AAAAA_0 * A
+>>> len(AAAAA_0), len(A), len(TMP)
+(2520, 7, 17640)
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[2520, 2520, 2520, 2520, 2520, 2520, 2520]
+
 '''
 
 from .work import A4 as A_orig
