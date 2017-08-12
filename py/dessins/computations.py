@@ -1,5 +1,4 @@
-'''
-Let's look at relabelling.
+'''Let's look at relabelling.
 >>> for t in sorted(every_relabel_of(A_orig)): print(t)
 ((1, 0, 0, 2, 3, 1, 4, 3, 2, 5, 6, 4, 5, 6), 6)
 ((1, 0, 0, 2, 3, 1, 4, 5, 2, 4, 6, 3, 5, 6), 5)
@@ -73,6 +72,40 @@ Now use the information we've obtained.
 
 >>> t = tuple(AB_0.iter_relabel(0)); (len(t)//2, t[:20])
 (49, (1, 0, 0, 2, 3, 1, 4, 5, 6, 7, 8, 3, 9, 10, 11, 4, 12, 8, 13, 14))
+
+Now for the remaining powers of A.
+
+>>> TMP = AA_0 * A
+>>> len(AA_0), len(A), len(TMP)
+(42, 7, 294)
+
+This is enough to see what is going on. We get AA_0 (with degree 42)
+twice, and a component of degree 210 making up the rest.
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[42, 210, 210, 210, 210, 210, 42]
+
+So we get two components, one of which is trivial. Here's the
+non-trivial one.
+>>> TMP2 = permpair_from_iterable(TMP.iter_relabel(1))
+>>> tmp2 = sorted(every_relabel_of(TMP2))
+>>> for t, i in tmp2[:5]: print(len(t)//2, i, t[:10])
+210 16 (1, 0, 2, 3, 4, 5, 6, 1, 7, 8)
+210 47 (1, 0, 2, 3, 4, 5, 6, 1, 7, 8)
+210 55 (1, 0, 2, 3, 4, 5, 6, 1, 7, 8)
+210 73 (1, 0, 2, 3, 4, 5, 6, 1, 7, 8)
+210 197 (1, 0, 2, 3, 4, 5, 6, 1, 7, 8)
+
+Now use the information we've obtained. First, we need to find the
+relabelling index. Hint: It's not 16.
+>>> for t, i in every_relabel_of(TMP):
+...     if t == tmp2[0][0]:     # The best.
+...         print(i)
+...         break
+3
+
+>>> t = tuple(AAA_0.iter_relabel(0)); (len(t)//2, t[:20])
+(210, (1, 0, 2, 3, 4, 5, 6, 1, 7, 8, 9, 2, 10, 11, 12, 13, 14, 4, 5, 15))
+
 '''
 
 from .work import A4 as A_orig
@@ -110,3 +143,7 @@ def every_relabel_of(permpair):
 AA_0 = permpair_from_iterable(AA.iter_relabel(6))
 BB_0 = permpair_from_iterable(BB.iter_relabel(41))
 AB_0 = permpair_from_iterable(AB.iter_relabel(42))
+
+
+# As dessins, AA_0 * A = 2*AA_0 + AAA_0
+AAA_0 = permpair_from_iterable((AA_0 * A).iter_relabel(3))
