@@ -129,6 +129,20 @@ three times, and a quad cover component of degree 840 making up the rest.
 >>> t == tmp[0][0]
 True
 
+>>> TMP = AAAA_0 * A
+>>> len(AAAA_0), len(A), len(TMP)
+(840, 7, 5880)
+
+This is enough to see what is going on. We get AAAA_0 (with degree
+210) three times, and a triple cover component of degree 840 making up
+the rest.
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[840, 840, 2520, 2520, 2520, 840, 840]
+
+At this point, we won't bother finding the best.
+>>> t = tuple(AAAAA_0.iter_relabel(0)); (len(t)//2, t[:20])
+(2520, (1, 2, 3, 4, 5, 0, 6, 7, 8, 1, 9, 10, 11, 12, 13, 3, 14, 15, 16, 17))
+
 '''
 
 from .work import A4 as A_orig
@@ -171,5 +185,9 @@ AB_0 = permpair_from_iterable(AB.iter_relabel(42))
 # As dessins, AA_0 * A = 2*AA_0 + AAA_0
 AAA_0 = permpair_from_iterable((AA_0 * A).iter_relabel(3))
 
-# As dessins, AAA_0 * A = 3*AA_0 + AAAA_0
+# As dessins, AAA_0 * A = 3*AAA_0 + AAAA_0
 AAAA_0 = permpair_from_iterable((AAA_0 * A).iter_relabel(40))
+
+# As dessins, AAAA_0 * A = 4*AAA_0 + AAAAA_0
+# At this point, we won't bother finding the best.
+AAAAA_0 = permpair_from_iterable((AAAA_0 * A).iter_relabel(2))
