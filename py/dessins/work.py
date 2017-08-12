@@ -79,7 +79,8 @@ class PermPair:
     >>> len(A_top * B_top)
     6350400
 
-    >>> len(tuple((A_top * B_top).iter_relabel(0)))
+    # Skip this - takes over 25 seconds.
+    >>> #  len(tuple((A_top * B_top).iter_relabel(0)))
     12700800
 
     '''
