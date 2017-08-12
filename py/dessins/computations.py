@@ -150,6 +150,44 @@ And now we're all done. Nothing left to do for powers of A.
 >>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
 [2520, 2520, 2520, 2520, 2520, 2520, 2520]
 
+
+And now for powers of B. First B**3 and BBB_0.
+>>> TMP = BB_0 * B
+>>> len(BB_0), len(B), len(TMP)
+(42, 7, 294)
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[210, 210, 210, 210, 210, 42, 42]
+
+>>> t = tuple(BBB_0.iter_relabel(0)); (len(t)//2, t[:20])
+(210, (1, 0, 2, 3, 4, 5, 6, 1, 7, 8, 9, 2, 10, 11, 12, 13, 14, 4, 15, 16))
+
+Now B**4 and BBBB_0.
+>>> TMP = BBB_0 * B
+>>> len(BBB_0), len(B), len(TMP)
+(210, 7, 1470)
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[210, 840, 840, 840, 840, 210, 210]
+
+>>> t = tuple(BBBB_0.iter_relabel(0)); (len(t)//2, t[:20])
+(840, (1, 2, 3, 4, 5, 0, 6, 7, 8, 1, 9, 10, 11, 12, 13, 3, 14, 15, 16, 17))
+
+Now B**5 and BBBBB_0.
+>>> TMP = BBBB_0 * B
+>>> len(BBBB_0), len(B), len(TMP)
+(840, 7, 5880)
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[840, 840, 2520, 2520, 2520, 840, 840]
+
+>>> t = tuple(BBBBB_0.iter_relabel(2)); (len(t)//2, t[:20])
+(2520, (1, 2, 3, 4, 5, 0, 6, 7, 8, 1, 9, 10, 11, 12, 13, 3, 14, 15, 16, 17))
+
+And now we're all done. Nothing left to do for powers of B.
+>>> TMP = BBBBB_0 * B
+>>> len(BBBBB_0), len(B), len(TMP)
+(2520, 7, 17640)
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[2520, 2520, 2520, 2520, 2520, 2520, 2520]
+
 '''
 
 from .work import A4 as A_orig
@@ -198,3 +236,12 @@ AAAA_0 = permpair_from_iterable((AAA_0 * A).iter_relabel(40))
 # As dessins, AAAA_0 * A = 4*AAA_0 + AAAAA_0
 # At this point, we won't bother finding the best.
 AAAAA_0 = permpair_from_iterable((AAAA_0 * A).iter_relabel(2))
+
+# As dessins, BB_0 * B = 2*BB_0 + BBB_0
+BBB_0 = permpair_from_iterable((BB_0 * B).iter_relabel(0))
+
+# As dessins, BBBB_0 * B = 3*BBB_0 + BBBB_0
+BBBB_0 = permpair_from_iterable((BBB_0 * B).iter_relabel(1))
+
+# As dessins, BBBBB_0 * B = 4*BBBB_0 + BBBBB_0
+BBBBB_0 = permpair_from_iterable((BBBB_0 * B).iter_relabel(2))
