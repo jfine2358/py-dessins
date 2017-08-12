@@ -2,6 +2,7 @@
 
 '''
 
+from array import array
 import bisect
 import collections
 import itertools
@@ -50,8 +51,8 @@ class Relabel:
         # TODO: Provide item access methods?
         self._size = 0
         self._zero_origin = None
-        self._backward = bytearray(maxsize)
-        self._forward = bytearray(maxsize)
+        self._backward = array('L', itertools.repeat(0, maxsize))
+        self._forward = array('L', itertools.repeat(0, maxsize))
 
 
     @property
