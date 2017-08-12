@@ -106,6 +106,29 @@ relabelling index. Hint: It's not 16.
 >>> t = tuple(AAA_0.iter_relabel(0)); (len(t)//2, t[:20])
 (210, (1, 0, 2, 3, 4, 5, 6, 1, 7, 8, 9, 2, 10, 11, 12, 13, 14, 4, 5, 15))
 
+>>> TMP = AAA_0 * A
+>>> len(AAA_0), len(A), len(TMP)
+(210, 7, 1470)
+
+This is enough to see what is going on. We get AAA_0 (with degree 210)
+three times, and a quad cover component of degree 840 making up the rest.
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[210, 840, 840, 210, 840, 840, 210]
+
+>>> tmp = sorted(pair for pair in every_relabel_of(TMP) if len(pair[0]) == 1680)
+>>> for t, i in tmp[:5]: print(len(t)//2, i, t[:10])
+840 40 (1, 2, 0, 3, 4, 0, 5, 1, 6, 7)
+840 69 (1, 2, 0, 3, 4, 0, 5, 1, 6, 7)
+840 92 (1, 2, 0, 3, 4, 0, 5, 1, 6, 7)
+840 140 (1, 2, 0, 3, 4, 0, 5, 1, 6, 7)
+840 252 (1, 2, 0, 3, 4, 0, 5, 1, 6, 7)
+
+>>> t = tuple(AAAA_0.iter_relabel(0)); (len(t)//2, t[:20])
+(840, (1, 2, 0, 3, 4, 0, 5, 1, 6, 7, 8, 9, 10, 11, 12, 4, 13, 14, 15, 5))
+
+>>> t == tmp[0][0]
+True
+
 '''
 
 from .work import A4 as A_orig
@@ -147,3 +170,6 @@ AB_0 = permpair_from_iterable(AB.iter_relabel(42))
 
 # As dessins, AA_0 * A = 2*AA_0 + AAA_0
 AAA_0 = permpair_from_iterable((AA_0 * A).iter_relabel(3))
+
+# As dessins, AAA_0 * A = 3*AA_0 + AAAA_0
+AAAA_0 = permpair_from_iterable((AAA_0 * A).iter_relabel(40))
