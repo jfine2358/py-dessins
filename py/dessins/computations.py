@@ -1,6 +1,6 @@
 '''
 Let's look at relabelling.
->>> for t in sorted([(tuple(A_orig.iter_relabel(i)), i) for i in range(7)]): print(t)
+>>> for t in sorted(every_relabel_of(A_orig)): print(t)
 ((1, 0, 0, 2, 3, 1, 4, 3, 2, 5, 6, 4, 5, 6), 6)
 ((1, 0, 0, 2, 3, 1, 4, 5, 2, 4, 6, 3, 5, 6), 5)
 ((1, 0, 2, 3, 0, 4, 5, 1, 6, 2, 3, 5, 4, 6), 0)
@@ -9,7 +9,7 @@ Let's look at relabelling.
 ((1, 2, 3, 1, 4, 0, 0, 5, 2, 4, 6, 3, 5, 6), 2)
 ((1, 2, 3, 4, 5, 0, 0, 3, 6, 1, 2, 5, 4, 6), 1)
 
->>> for t in sorted([(tuple(B_orig.iter_relabel(i)), i) for i in range(7)]): print(t)
+>>> for t in sorted(every_relabel_of(B_orig)): print(t)
 ((1, 0, 0, 2, 3, 1, 2, 4, 5, 3, 6, 5, 4, 6), 6)
 ((1, 0, 2, 1, 0, 3, 4, 2, 3, 5, 6, 4, 5, 6), 0)
 ((1, 0, 2, 3, 0, 2, 4, 1, 3, 5, 6, 4, 5, 6), 1)
@@ -62,3 +62,13 @@ B = permpair_from_iterable(B_orig.iter_relabel(6))
 AA = A * A
 AB = A * B
 BB = B * B
+
+
+def every_relabel_of(permpair):
+
+    value = []
+    for i in range(len(permpair)):
+        ints = tuple(permpair.iter_relabel(i))
+        value.append((ints, i))
+
+    return value
