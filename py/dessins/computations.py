@@ -188,6 +188,30 @@ And now we're all done. Nothing left to do for powers of B.
 >>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
 [2520, 2520, 2520, 2520, 2520, 2520, 2520]
 
+
+Make a start on higher degree mixed terms. They seem to be orthogonal.
+>>> TMP = AB * A
+>>> len(AB), len(A), len(TMP)
+(49, 7, 343)
+>>> [len(tuple(TMP.iter_relabel(i)))//2 for i in range(7)]
+[49, 294, 294, 294, 294, 294, 294]
+
+>>> t = tuple(AAB_0.iter_relabel(1)); (len(t)//2, t[:20])
+(294, (1, 2, 0, 3, 4, 0, 5, 1, 6, 7, 8, 9, 10, 11, 12, 4, 13, 14, 15, 5))
+
+Note that 294 = 42 * 7.
+
+>>> aaa = sorted(every_relabel_of(AAB_0))[0][0]
+>>> aaa[:20]
+(1, 0, 0, 2, 3, 1, 4, 5, 6, 7, 8, 3, 9, 10, 11, 4, 12, 13, 14, 15)
+
+>>> bbb = sorted(every_relabel_of(AA_0 * B))[0][0]
+>>> bbb[:20]
+(1, 0, 0, 2, 3, 1, 4, 5, 6, 7, 8, 3, 9, 10, 11, 4, 12, 13, 14, 15)
+
+>>> aaa == bbb
+True
+
 '''
 
 from .work import A4 as A_orig
@@ -245,3 +269,6 @@ BBBB_0 = permpair_from_iterable((BBB_0 * B).iter_relabel(1))
 
 # As dessins, BBBBB_0 * B = 4*BBBB_0 + BBBBB_0
 BBBBB_0 = permpair_from_iterable((BBBB_0 * B).iter_relabel(2))
+
+# As dessins, AB * B = AB + AAB_0
+AAB_0 = permpair_from_iterable((AB * A).iter_relabel(1))
