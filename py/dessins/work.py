@@ -1,4 +1,5 @@
 from array import array
+from .permtools import Relabel
 
 
 # Lando + Zvonkin, p90, Fig 2.9
@@ -63,6 +64,24 @@ class PermPair:
     >>> tuple(map(A4_B4.alpha, range(14)))
     (8, 9, 7, 11, 10, 13, 12, 15, 16, 14, 18, 17, 20, 19)
 
+    >>> AAA = A4 * A4 * A4 * A4 * A4 * A4 * A4
+    >>> BBB = B4 * B4 * B4 * B4 * B4 * B4 * B4
+
+    >>> magic = sum(i * 7 ** i for i in range(7))
+    >>> len(tuple(AAA.iter_relabel(magic)))
+    5040
+    >>> len(tuple(AAA.iter_relabel(magic)))
+    5040
+
+    >>> len(A_top), len(B_top)
+    (2520, 2520)
+
+    >>> len(A_top * B_top)
+    6350400
+
+    >>> len(tuple((A_top * B_top).iter_relabel(0)))
+    12700800
+
     '''
 
     __slots__ = 'alpha', 'beta', 'length'
@@ -98,5 +117,40 @@ class PermPair:
         return PermPair(alpha, beta, length)
 
 
+    def iter_relabel(self, root):
+
+        length = len(self)
+        relabel = Relabel(length)
+        edge_zero = relabel.forward(root) # Seed the relabelling.
+
+        for new_label in range(length):
+
+            # Stop when we run out of new labels.
+            if new_label >= relabel.size:
+                break
+
+            old_label = relabel.backward(new_label)
+            old_alpha = self.alpha(old_label)
+            old_beta = self.beta(old_label)
+
+            yield relabel.forward(old_alpha)
+            yield relabel.forward(old_beta)
+
+
 A4 = PermPair(*A3)
 B4 = PermPair(*B3)
+
+
+def doit2():
+
+    AAA = A4 * A4 * A4 * A4 * A4 * A4 * A4
+    BBB = B4 * B4 * B4 * B4 * B4 * B4 * B4
+    magic = sum(i * 7 ** i for i in range(7))
+
+    A_top = PermPair(*aaa_from_bytes(bytes_from_ints('L', AAA.iter_relabel(magic))))
+    B_top = PermPair(*aaa_from_bytes(bytes_from_ints('L', BBB.iter_relabel(magic))))
+
+    return A_top, B_top
+
+
+A_top, B_top = doit2()
